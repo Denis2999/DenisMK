@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 
 from ckeditor_uploader.fields import RichTextUploadingField
+from taggit.managers import TaggableManager
 
 
 class PublishedManager(models.Manager):
@@ -19,6 +20,7 @@ class Post(models.Model):
 
     title = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(max_length=200, unique_for_date='publish', unique=True)
+    image = models.ImageField(upload_to='featured_image/%Y/%m/%d/')
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blog_posts')
     body = RichTextUploadingField()
 
@@ -27,6 +29,8 @@ class Post(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
+    tags = TaggableManager()
+
 
     class Meta:
         ordering = ['-publish']
